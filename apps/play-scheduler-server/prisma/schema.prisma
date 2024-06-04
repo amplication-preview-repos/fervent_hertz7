@@ -1,0 +1,52 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Availability {
+  createdAt DateTime  @default(now())
+  endTime   DateTime?
+  id        String    @id @default(cuid())
+  startTime DateTime?
+  updatedAt DateTime  @updatedAt
+  user      User?     @relation(fields: [userId], references: [id])
+  userId    String?
+}
+
+model Match {
+  createdAt     DateTime  @default(now())
+  id            String    @id @default(cuid())
+  scheduledTime DateTime?
+  updatedAt     DateTime  @updatedAt
+  user          User?     @relation(fields: [userId], references: [id])
+  userId        String?
+}
+
+model Notification {
+  createdAt        DateTime @default(now())
+  emailSent        Boolean?
+  id               String   @id @default(cuid())
+  responseReceived Boolean?
+  updatedAt        DateTime @updatedAt
+  user             User?    @relation(fields: [userId], references: [id])
+  userId           String?
+}
+
+model User {
+  availabilities Availability[]
+  createdAt      DateTime       @default(now())
+  email          String?        @unique
+  firstName      String?
+  id             String         @id @default(cuid())
+  lastName       String?
+  matches        Match[]
+  notifications  Notification[]
+  password       String
+  roles          Json
+  updatedAt      DateTime       @updatedAt
+  username       String         @unique
+}
